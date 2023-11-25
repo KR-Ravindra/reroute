@@ -6,7 +6,6 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { MapView, FirstPersonView } from '@deck.gl/core';
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoicGFsbGF2aWtoZWRsZSIsImEiOiJjbHBkZGR6ajMwdTJoMnFuNzYxZHRrZGprIn0.JMx-nFt9QpuKjZ4KHXcNXg';
-
 const INITIAL_VIEW_STATE = {
   longitude: -122.41669,
   latitude: 37.7853,
@@ -49,20 +48,17 @@ function HomePage() {
   }
 
   return (
-    <div 
-    style={containerStyle}
-    >
+    <div style={containerStyle}>
       <DeckGL
         initialViewState={INITIAL_VIEW_STATE}
         controller={true}
         layers={layers}
         style={{ width: '100%', height: '100vh' }}
       >
-        <MapView id="map" width="50%" controller={true}>
-          <Map mapboxAccessToken={MAPBOX_ACCESS_TOKEN} />
-        </MapView>
-        <FirstPersonView width="50%" x="50%" fovy={50} />
-      </DeckGL>
+      <MapView id="map" controller={true}>
+        <Map mapboxAccessToken={MAPBOX_ACCESS_TOKEN} mapStyle="mapbox://styles/mapbox/streets-v11" />
+      </MapView>
+    </DeckGL>
     </div>
   );
 }
