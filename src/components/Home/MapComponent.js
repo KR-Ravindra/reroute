@@ -13,7 +13,7 @@ function MapComponent({data}) {
   const INITIAL_VIEW_STATE = {
     longitude: -96.5795,
     latitude: 39.8283,
-    zoom: 3,
+    zoom: 4,
     pitch: 0,
     bearing: 0
   };
@@ -67,7 +67,7 @@ function MapComponent({data}) {
         style={{ width: '100%', height: '100vh' }}
       >
       <MapView id="map" controller={true}>
-        <Map mapboxAccessToken={MAPBOX_ACCESS_TOKEN} mapStyle="mapbox://styles/mapbox/dark-v10" />
+        <Map mapboxAccessToken={MAPBOX_ACCESS_TOKEN} mapStyle="mapbox://styles/mapbox/navigation-night-v1" />
       </MapView>
     </DeckGL>
     </div>
