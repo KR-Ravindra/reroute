@@ -22,7 +22,7 @@ function Home() {
             color: 'white', // this will make the text color white
             border: 'none', // this will remove the default button border
             padding: '10px', // add some padding to the button
-            flex: 1
+            width: '100%', // set a fixed width for the button
           }} 
         onClick={handleSimulateClick}
       >Simulate</button>
