@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DeckGL from '@deck.gl/react';
 import { LineLayer } from '@deck.gl/layers';
 import { Map } from 'react-map-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import { MapView, FirstPersonView } from '@deck.gl/core';
+import { MapView } from '@deck.gl/core';
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoicGFsbGF2aWtoZWRsZSIsImEiOiJjbHBkZGR6ajMwdTJoMnFuNzYxZHRrZGprIn0.JMx-nFt9QpuKjZ4KHXcNXg';
 const INITIAL_VIEW_STATE = {
@@ -38,7 +37,6 @@ function HomePage() {
 
   const containerStyle = {
     position: 'relative',
-    background: 'black',
     width: '100vw',
     height: '100vh'
   };
@@ -56,7 +54,7 @@ function HomePage() {
         style={{ width: '100%', height: '100vh' }}
       >
       <MapView id="map" controller={true}>
-        <Map mapboxAccessToken={MAPBOX_ACCESS_TOKEN} mapStyle="mapbox://styles/mapbox/streets-v11" />
+        <Map mapboxAccessToken={MAPBOX_ACCESS_TOKEN} mapStyle="mapbox://styles/mapbox/dark-v10" />
       </MapView>
     </DeckGL>
     </div>
