@@ -15,46 +15,33 @@ function Home() {
     setIsSelecting(!isSelecting);
   };
 
-  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
   const handleMapClick = async (event) => {
     if (isSelecting) {
       setPositions((prevPositions) => {
         const newPositions = [...prevPositions, event.coordinate];
-        console.log('New Positions:', newPositions);
+        console.log(newPositions);
         return newPositions;
       });
-    }
-  
-    // Process batch geocoding only if there are coordinates and not already processing
-    if (positions.length > 0 && !isSelecting) {
-      const throttleDelay = 500;
-  
-      for (let index = 0; index < positions.length; index++) {
-        const position = positions[index];
-        try {
-          const response = await axios.get(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${position[1]}&lon=${position[0]}`
-          );
-          const locationName = response.data.display_name;
-  
-          setLocationNames((prevLocationNames) => [...prevLocationNames, locationName]);
-        } catch (error) {
-          console.error('Error during batch geocoding:', error);
-        }
-  
-        // Throttle the requests
-        await delay(throttleDelay);
-      }
+
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${event.coordinate[1]}&lon=${event.coordinate[0]}`)
+      .then(response => response.json())
+      .then(data => {
+        const locationName = data.display_name;
+        setLocationNames((prevLocationNames) => [
+          ...prevLocationNames,
+          locationName,
+        ]);
+      })
+      .catch(error => console.error('Error:', error));
+    } else {
+      alert("Choosing locations? Consider 'Start Selecting' button.");
     }
   };
-  
-  
-  
+
 
   const handleSimulateClick = () => {
     console.log("Simulation Clicked");
-    animateData(setData, positions);
+    animateData(data, setData, positions);
   };
 
   return (
