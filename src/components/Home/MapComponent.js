@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import DeckGL from '@deck.gl/react';
 import { LineLayer, ScatterplotLayer } from '@deck.gl/layers';
-import { Map } from 'react-map-gl';
+import { InteractiveMap, Map } from 'react-map-gl';
 import { MapView } from '@deck.gl/core';
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoicGFsbGF2aWtoZWRsZSIsImEiOiJjbHBkZGR6ajMwdTJoMnFuNzYxZHRrZGprIn0.JMx-nFt9QpuKjZ4KHXcNXg';
 
 
 
-function MapComponent({data}) {
+function MapComponent({onClick, data}) {
   const [error, setError] = useState(null);
   const INITIAL_VIEW_STATE = {
     longitude: -96.5795,
@@ -65,6 +65,7 @@ function MapComponent({data}) {
         controller={true}
         layers={layers}
         style={{ width: '100%', height: '100vh' }}
+        onClick={onClick}
       >
       <MapView id="map" controller={true}>
         <Map mapboxAccessToken={MAPBOX_ACCESS_TOKEN} mapStyle="mapbox://styles/mapbox/navigation-night-v1" />
