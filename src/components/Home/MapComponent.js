@@ -43,7 +43,7 @@ function MapComponent({onClick, data}) {
     new LineLayer({
       id: 'line-layer',
       data,
-      getColor: [255, 255, 255],
+      getColor: [255, 165, 0],
       getWidth: 5
     })
   ];

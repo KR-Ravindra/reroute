@@ -68,6 +68,13 @@ function Home() {
           ...prevLocationNames,
           locationName,
         ]);
+        setData((prevData) => [
+          ...prevData,
+          {
+            sourcePosition: event.coordinate,
+            targetPosition: event.coordinate,
+          }
+        ]);
       })
       .catch(error => console.error('Error:', error));
     } else {
@@ -76,8 +83,15 @@ function Home() {
   };
 
   const handleListItemClick = (suggestion) => {
-    console.log("Item selected is ", suggestion.display_name)
     setPositions((prevPositions) => [...prevPositions, [parseFloat(suggestion.lon), parseFloat(suggestion.lat)]]);
+    setData((prevData) => [
+      ...prevData,
+      {
+        sourcePosition: [parseFloat(suggestion.lon), parseFloat(suggestion.lat)],
+        targetPosition: [parseFloat(suggestion.lon), parseFloat(suggestion.lat)],
+      }
+    ]);
+    console.log("Updated data is ", data)
     fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${suggestion.lat}&lon=${suggestion.lon}`)
       .then(response => response.json())
       .then(data => {
