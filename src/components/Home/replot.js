@@ -1,8 +1,15 @@
 export function animateData(data, setData, positions) {
+  setData([]);
 
   console.log("Positions are", positions)
   const locations = positions.map((position) => ({ position }));
   console.log(locations);
+
+// {
+// {position: [1,2]},
+// {position: [1,2]}
+// ....
+// }
 
   // Convert locations to data format and set data
   locations.forEach((location, index) => {

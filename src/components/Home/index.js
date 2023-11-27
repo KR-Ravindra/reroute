@@ -11,9 +11,46 @@ function Home() {
   const [positions, setPositions] = useState([]);
   const [isSelecting, setIsSelecting] = useState(false);
   const [locationNames, setLocationNames] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [flash, setFlash] = useState(false);
+
+
+  useEffect(() => {
+    fetchSuggestions();
+  }, [searchTerm]);
+  useEffect(() => {
+    if (flash) {
+      const timer = setTimeout(() => {
+        setFlash(false); 
+      }, 500);
+      return () => clearTimeout(timer); 
+    }
+  }, [flash]);
+
+  const fetchSuggestions = async () => {
+    if (searchTerm.length < 3) {
+      setSuggestions([]);
+      return;
+    }
+
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${searchTerm}`);
+    const data = await response.json();
+  
+    setSuggestions(data);
+  };
+
   const handleSelectClick = () => {
     setIsSelecting(!isSelecting);
   };
+
+  const handleClearClick = () => {
+    setIsSelecting(false);
+    setPositions([]);
+    setLocationNames([]);
+    setData([]);
+  };
+
 
   const handleMapClick = async (event) => {
     if (isSelecting) {
@@ -38,12 +75,34 @@ function Home() {
     }
   };
 
+  const handleListItemClick = (suggestion) => {
+    console.log("Item selected is ", suggestion.display_name)
+    setPositions((prevPositions) => [...prevPositions, [parseFloat(suggestion.lon), parseFloat(suggestion.lat)]]);
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${suggestion.lat}&lon=${suggestion.lon}`)
+      .then(response => response.json())
+      .then(data => {
+        const locationName = data.display_name;
+        setLocationNames((locationNames) => {
+          if (locationNames.includes(locationName)) {
+            return locationNames;
+          } else {
+            setFlash(true);
+            return [...locationNames, locationName];
+          }
+        });
+        setSuggestions([]);
+        setSearchTerm('');
+      })
+      .catch(error => console.error('Error:', error));
+  };
+
 
   const handleSimulateClick = () => {
     console.log("Simulation Clicked");
+    setIsSelecting(false);
     animateData(data, setData, positions);
   };
-
+  
   return (
     <div>
       <button
@@ -70,19 +129,18 @@ function Home() {
           color: "white",
           border: "none",
           padding: "10px",
-          width: "50%",
+          width: "25%",
         }}
         onClick={handleSelectClick}
       >
         {isSelecting ? "Stop Selecting" : "Start Selecting"}
       </button>
-
       <select
         style={{
           opacity: "1",
           transition: "opacity 0.2s ease-in-out",
           ":active": { opacity: "0.5" },
-          backgroundColor: "green",
+          backgroundColor: flash ? 'red' : 'green',
           color: "white",
           border: "2px solid white",
           padding: "10px",
@@ -90,7 +148,7 @@ function Home() {
         }}
       >
         <option value="Selected Locations" disabled selected>
-          Selected Locations
+          {locationNames.length} Locations Selected
         </option>
         {locationNames.map((locationName, index) => (
           <option key={index} value={locationName}>
@@ -98,8 +156,56 @@ function Home() {
           </option>
         ))}
       </select>
+      <button
+        style={{
+          opacity: "1",
+          transition: "opacity 0.2s ease-in-out",
+          ":active": { opacity: "0.5" },
+          backgroundColor: "red",
+          color: "white",
+          border: "2px solid white",
+          padding: "10px",
+          width: "25%",
+        }}
+        onClick={handleClearClick}
+      >
+        Clear Selection
+      </button>
+      <input
+        type="text"
+        style={{
+          opacity: "1",
+          transition: "opacity 0.2s ease-in-out",
+          ":active": { opacity: "0.5" },
+          backgroundColor: "white",
+          color: "green",
+          border: "none",
+          padding: "10px",
+          width: "99%",
+        }}
+        placeholder="Search locations..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
 
+      <ul style={{
+          opacity: "1",
+          transition: "opacity 0.2s ease-in-out",
+          ":active": { opacity: "0.5" },
+          backgroundColor: "green",
+          color: "white",
+          border: "1px solid green",
+          width: "99%",
+          textAlign: "left",
+          margin: "0"
+       }} > 
+      {suggestions.map((suggestion) => (
+        <li key={suggestion.id} style={{ listStyleType: 'none', cursor: 'pointer' }} onClick={() => handleListItemClick(suggestion)}>{suggestion.display_name}</li>
+      ))}
+      </ul>
+      <div style={{  overflow: 'hidden' }}>
       <MapComponent onClick={handleMapClick} data={data}></MapComponent>
+    </div>
     </div>
   );
 }
