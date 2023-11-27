@@ -1,15 +1,8 @@
 export function animateData(data, setData, positions) {
-  setData([]);
-
   console.log("Positions are", positions)
   const locations = positions.map((position) => ({ position }));
   console.log(locations);
 
-// {
-// {position: [1,2]},
-// {position: [1,2]}
-// ....
-// }
 
   // Convert locations to data format and set data
   locations.forEach((location, index) => {
@@ -24,9 +17,7 @@ export function animateData(data, setData, positions) {
             targetPosition: nextLocation.position,
           },
         ]);
-        // 1. do sleep 30 seconds and make website hand 
-        // 2. port this sleep loop to 30 seconds to a wroker
-        // 3. try to exchange data between worker and main thread
+
       }
       if (index === locations.length - 1) {
         setData((prevData) => [
