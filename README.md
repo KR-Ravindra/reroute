@@ -8,3 +8,5 @@ This project is a simulation of finding the optimal delivery path across nodes u
 In the project directory, you can run:
 
 ### `npm start`
+
+Live [here](https://reroute-5dci8e5e4-kr-ravindras-projects.vercel.app/)
