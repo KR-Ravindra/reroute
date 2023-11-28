@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from "react";
+// Home.js
+import React, { useEffect, useState, useRef } from "react";
 import MapComponent from "./MapComponent";
-// import tspWorker from './tspWorker';
+import worker_script from "./tspWorker";
 
-
-const tspWorker = new Worker('./tspWorker.js');
-
-
-function Home() {
-  const [data, setData] = useState([]);
+const Home = () => {
   const [positions, setPositions] = useState([]);
   const [isSelecting, setIsSelecting] = useState(false);
   const [locationNames, setLocationNames] = useState([]);
+  const [data, setData] = useState([]);
+
+  const workerRef = useRef(null);
 
   const handleSelectClick = () => {
     setIsSelecting(!isSelecting);
@@ -18,72 +17,55 @@ function Home() {
 
   const handleMapClick = async (event) => {
     if (isSelecting) {
-      setPositions((prevPositions) => {
-        const newPositions = [...prevPositions, event.coordinate];
-        console.log(newPositions);
-        return newPositions;
-      });
+      setPositions((prevPositions) => [...prevPositions, event.coordinate]);
 
-      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${event.coordinate[1]}&lon=${event.coordinate[0]}`)
-        .then(response => response.json())
-        .then(data => {
-          const locationName = data.display_name;
-          setLocationNames((prevLocationNames) => [
-            ...prevLocationNames,
-            locationName,
-          ]);
-        })
-        .catch(error => console.error('Error:', error));
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${event.coordinate[1]}&lon=${event.coordinate[0]}`
+        );
+        const data = await response.json();
+        const locationName = data.display_name;
+        setLocationNames((prevLocationNames) => [
+          ...prevLocationNames,
+          locationName,
+        ]);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     } else {
       alert("Choosing locations? Consider 'Start Selecting' button.");
     }
   };
 
   const handleSimulateClick = () => {
-    console.log("Simulation Clicked");
-    
-    if (typeof(Worker) !== "undefined") {
-      if (typeof(tspWorker) === "undefined") {
-        tspWorker = new Worker("tspWorker.js");
-      }
-  
-      console.log("Before postMessage",tspWorker);
-  
-      tspWorker.onmessage = function(event) {
-        let response = event.data;
-        if(response.redirectURL) {
-          window.location.href = response.redirectURL;
-        } else {
-          // Process response
-          console.log('Process response');
-        }
-      };
-  
-      tspWorker.postMessage({ action: 'simulateAndAnimate', data: positions });
-  
-      console.log("After postMessage",tspWorker);
-    } else {
-      console.log('Web Workers are not supported in this browser');
-    }
+    console.log("Simulate button clicked");
+    workerRef.current.postMessage({
+      action: "simulateAndAnimate",
+      data: positions,
+    });
   };
 
   useEffect(() => {
-    const messageHandler = (event) => {
-        const { action, result } = event.data;
-        console.log('Handler Action:', action);
-        if (action === 'tspResult') {
-            console.log('TSP Result:', result);
-            setData(result);
-        }
+    workerRef.current = new Worker(worker_script);
+
+    workerRef.current.onmessage = (event) => {
+      console.log("Message from worker:", event.data);
+      const { action, result } = event.data;
+
+      if (action === "tspResult") {
+        console.log("TSP Result:", result);
+        setData(result);
+      }
     };
 
-    tspWorker.addEventListener('message', messageHandler);
+    workerRef.current.onerror = (error) => {
+      console.error("Worker error:", error);
+    };
 
     return () => {
-        tspWorker.removeEventListener('message', messageHandler);
-        tspWorker.terminate();
+      workerRef.current.terminate();
     };
-}, [positions, data]);
+  }, [positions]); // Include positions in the dependency array
 
   return (
     <div>
@@ -91,14 +73,13 @@ function Home() {
         style={{
           opacity: "1",
           transition: "opacity 0.2s ease-in-out",
-          ":active": { opacity: "0.5" },
           backgroundColor: "green",
           color: "white",
           border: "none",
           padding: "10px",
           width: "100%",
         }}
-        onClick={() => handleSimulateClick()}
+        onClick={handleSimulateClick}
       >
         Simulate
       </button>
@@ -106,7 +87,6 @@ function Home() {
         style={{
           opacity: "1",
           transition: "opacity 0.2s ease-in-out",
-          ":active": { opacity: "0.5" },
           backgroundColor: isSelecting ? "red" : "green",
           color: "white",
           border: "none",
@@ -122,15 +102,15 @@ function Home() {
         style={{
           opacity: "1",
           transition: "opacity 0.2s ease-in-out",
-          ":active": { opacity: "0.5" },
           backgroundColor: "green",
           color: "white",
           border: "2px solid white",
           padding: "10px",
           width: "50%",
         }}
+        defaultValue="Selected Locations"
       >
-        <option value="Selected Locations" disabled selected>
+        <option value="Selected Locations" disabled>
           Selected Locations
         </option>
         {locationNames.map((locationName, index) => (
@@ -140,9 +120,9 @@ function Home() {
         ))}
       </select>
 
-      <MapComponent onClick={handleMapClick} data={data}></MapComponent>
+      <MapComponent onClick={handleMapClick} data={data} />
     </div>
   );
-}
+};
 
 export default Home;
