@@ -17,7 +17,13 @@ export function animateData(data, setData, positions) {
             targetPosition: nextLocation.position,
           },
         ]);
+        const myname="test"
+        const worker = new Worker('precious_workers/test.worker.js');
+        worker.postMessage(myname);
 
+        worker.onmessage = (e) => {
+          console.log(e.data);
+        };
       }
       if (index === locations.length - 1) {
         setData((prevData) => [
