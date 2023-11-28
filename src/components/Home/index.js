@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import MapComponent from "./MapComponent";
-import { animateData } from "./replot";
-import axios from "axios";
+// import tspWorker from './tspWorker';
 
-const MAPBOX_ACCESS_TOKEN =
-  "pk.eyJ1IjoicGFsbGF2aWtoZWRsZSIsImEiOiJjbHBkZGR6ajMwdTJoMnFuNzYxZHRrZGprIn0.JMx-nFt9QpuKjZ4KHXcNXg";
+
+const tspWorker = new Worker('./tspWorker.js');
+
+
 function Home() {
-  const [error, setError] = useState(null);
   const [data, setData] = useState([]);
   const [positions, setPositions] = useState([]);
   const [isSelecting, setIsSelecting] = useState(false);
   const [locationNames, setLocationNames] = useState([]);
+
   const handleSelectClick = () => {
     setIsSelecting(!isSelecting);
   };
@@ -24,25 +25,65 @@ function Home() {
       });
 
       fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${event.coordinate[1]}&lon=${event.coordinate[0]}`)
-      .then(response => response.json())
-      .then(data => {
-        const locationName = data.display_name;
-        setLocationNames((prevLocationNames) => [
-          ...prevLocationNames,
-          locationName,
-        ]);
-      })
-      .catch(error => console.error('Error:', error));
+        .then(response => response.json())
+        .then(data => {
+          const locationName = data.display_name;
+          setLocationNames((prevLocationNames) => [
+            ...prevLocationNames,
+            locationName,
+          ]);
+        })
+        .catch(error => console.error('Error:', error));
     } else {
       alert("Choosing locations? Consider 'Start Selecting' button.");
     }
   };
 
-
   const handleSimulateClick = () => {
     console.log("Simulation Clicked");
-    animateData(data, setData, positions);
+    
+    if (typeof(Worker) !== "undefined") {
+      if (typeof(tspWorker) === "undefined") {
+        tspWorker = new Worker("tspWorker.js");
+      }
+  
+      console.log("Before postMessage",tspWorker);
+  
+      tspWorker.onmessage = function(event) {
+        let response = event.data;
+        if(response.redirectURL) {
+          window.location.href = response.redirectURL;
+        } else {
+          // Process response
+          console.log('Process response');
+        }
+      };
+  
+      tspWorker.postMessage({ action: 'simulateAndAnimate', data: positions });
+  
+      console.log("After postMessage",tspWorker);
+    } else {
+      console.log('Web Workers are not supported in this browser');
+    }
   };
+
+  useEffect(() => {
+    const messageHandler = (event) => {
+        const { action, result } = event.data;
+        console.log('Handler Action:', action);
+        if (action === 'tspResult') {
+            console.log('TSP Result:', result);
+            setData(result);
+        }
+    };
+
+    tspWorker.addEventListener('message', messageHandler);
+
+    return () => {
+        tspWorker.removeEventListener('message', messageHandler);
+        tspWorker.terminate();
+    };
+}, [positions, data]);
 
   return (
     <div>
@@ -57,7 +98,7 @@ function Home() {
           padding: "10px",
           width: "100%",
         }}
-        onClick={handleSimulateClick}
+        onClick={() => handleSimulateClick()}
       >
         Simulate
       </button>
