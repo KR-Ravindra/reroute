@@ -309,7 +309,7 @@ function Home() {
   };
 
   return (
-    <div>
+<div style={{ overflow: 'hidden', overflowy: 'hidden' }}>
       <button
         style={{
           opacity: "1",
