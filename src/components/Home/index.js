@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
 import MapComponent from "./MapComponent";
 import { animateData } from "./replot";
-import axios from "axios";
 
-const MAPBOX_ACCESS_TOKEN =
-  "pk.eyJ1IjoicGFsbGF2aWtoZWRsZSIsImEiOiJjbHBkZGR6ajMwdTJoMnFuNzYxZHRrZGprIn0.JMx-nFt9QpuKjZ4KHXcNXg";
 function Home() {
-  const [error, setError] = useState(null);
   const [data, setData] = useState([]);
   const [positions, setPositions] = useState([
     [-118.2437, 34.0522], // Los Angeles, CA
@@ -89,7 +85,6 @@ function Home() {
   const [route, setFinalRoute] = useState("");
   const [fileUrl, setFileUrl] = useState(null);
 
-
   useEffect(() => {
     fetchSuggestions();
   }, [searchTerm]);
@@ -103,13 +98,22 @@ function Home() {
   }, [flash]);
   useEffect(() => {
     if (route) {
-      const fileContent = 'Best Route: ' + route + '\n\n' + locationNames.map((locationName, index) => `locationID: ${index}, locationName: ${locationName}`).join('\n');
-      const blob = new Blob([fileContent], { type: 'text/plain' });
+      const fileContent =
+        "Best Route: " +
+        route +
+        "\n\n" +
+        locationNames
+          .map(
+            (locationName, index) =>
+              `locationID: ${index}, locationName: ${locationName}`
+          )
+          .join("\n");
+      const blob = new Blob([fileContent], { type: "text/plain" });
       const url = URL.createObjectURL(blob);
-  
-      const link = document.createElement('a');
+
+      const link = document.createElement("a");
       link.href = url;
-      link.download = 'locations.txt';
+      link.download = "locations.txt";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -299,27 +303,42 @@ function Home() {
         },
       ]);
     });
-    animateData(speed, data, setData, positions, selectedAlgorithm, setFinalRoute);
+    animateData(
+      speed,
+      data,
+      setData,
+      positions,
+      selectedAlgorithm,
+      setFinalRoute
+    );
   };
 
   const handleSimulateClick = () => {
     console.log("Simulation Clicked");
     setIsSelecting(false);
-    animateData(speed, data, setData, positions, selectedAlgorithm, setFinalRoute);
+    animateData(
+      speed,
+      data,
+      setData,
+      positions,
+      selectedAlgorithm,
+      setFinalRoute
+    );
   };
 
   return (
-<div style={{ overflow: 'hidden', overflowy: 'hidden' }}>
+    <div style={{ overflow: "hidden", overflowy: "hidden" }}>
       <button
         style={{
           opacity: "1",
           transition: "opacity 0.2s ease-in-out",
           ":active": { opacity: "0.5" },
-          backgroundColor: "green",
+          backgroundColor: "#424D5C",
           color: "white",
           border: "none",
           padding: "10px",
           width: "43%",
+          fontWeight:'bold'
         }}
         onClick={handleSimulateClick}
       >
@@ -330,7 +349,7 @@ function Home() {
           opacity: "1",
           transition: "opacity 0.2s ease-in-out",
           ":active": { opacity: "0.5" },
-          backgroundColor: "green",
+          backgroundColor: "#424D5C",
           color: "white",
           border: "2px solid white",
           padding: "10px",
@@ -352,7 +371,7 @@ function Home() {
           opacity: "1",
           transition: "opacity 0.2s ease-in-out",
           ":active": { opacity: "0.5" },
-          backgroundColor: flash ? "red" : "green",
+          backgroundColor: "#5D767E",
           color: "white",
           border: "2px solid white",
           padding: "10px",
@@ -374,7 +393,7 @@ function Home() {
           opacity: "1",
           transition: "opacity 0.2s ease-in-out",
           ":active": { opacity: "0.5" },
-          backgroundColor: "green",
+          backgroundColor: "#5D767E",
           color: "white",
           border: "2px solid white",
           padding: "10px",
@@ -389,7 +408,7 @@ function Home() {
           opacity: "1",
           transition: "opacity 0.2s ease-in-out",
           ":active": { opacity: "0.5" },
-          backgroundColor: isSelecting ? "red" : "green",
+          backgroundColor: isSelecting ? "#FFA503" : "#424D5C",
           color: "white",
           border: "none",
           padding: "10px",
@@ -404,7 +423,7 @@ function Home() {
           opacity: "1",
           transition: "opacity 0.2s ease-in-out",
           ":active": { opacity: "0.5" },
-          backgroundColor: flash ? "red" : "green",
+          backgroundColor: flash ? "#FFA503" : "#5D767E",
           color: "white",
           border: "2px solid white",
           padding: "10px",
@@ -426,7 +445,7 @@ function Home() {
           opacity: "1",
           transition: "opacity 0.2s ease-in-out",
           ":active": { opacity: "0.5" },
-          backgroundColor: "red",
+          backgroundColor: "#FFA503",
           color: "white",
           border: "2px solid white",
           padding: "10px",
@@ -441,7 +460,7 @@ function Home() {
           opacity: "1",
           transition: "opacity 0.2s ease-in-out",
           ":active": { opacity: "0.5" },
-          backgroundColor: "red",
+          backgroundColor: "#FFA503",
           color: "white",
           border: "2px solid white",
           padding: "10px",
@@ -451,31 +470,33 @@ function Home() {
       >
         Clear All
       </button>
-      <input
-        type="text"
-        style={{
-          opacity: "1",
-          transition: "opacity 0.2s ease-in-out",
-          ":active": { opacity: "0.5" },
-          backgroundColor: "white",
-          color: "green",
-          border: "none",
-          padding: "10px",
-          width: "99%",
-        }}
-        placeholder="Search locations..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
+      {isSelecting && (
+        <input
+          type="text"
+          style={{
+            opacity: "1",
+            transition: "opacity 0.2s ease-in-out",
+            ":active": { opacity: "0.5" },
+            backgroundColor: "white",
+            color: "#5D767E",
+            border: "none",
+            padding: "10px",
+            width: "99%",
+          }}
+          placeholder="Search locations..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      )}
 
       <ul
         style={{
           opacity: "1",
           transition: "opacity 0.2s ease-in-out",
           ":active": { opacity: "0.5" },
-          backgroundColor: "green",
+          backgroundColor: "#5D767E",
           color: "white",
-          border: "1px solid green",
+          border: "1px solid #5D767E",
           width: "99%",
           textAlign: "left",
           margin: "0",
@@ -493,8 +514,8 @@ function Home() {
       </ul>
       {route && (
         <div style={{ display: "flex", alignItems: "center" }}>
-          <p style={{ color: "white", background: "green", margin: "0" }}>
-            Final Route:{" "}
+          <p style={{ color: "white", background: "#5D767E", margin: "0", padding:'2' }}>
+            Route{" "}
           </p>
           <div
             style={{ overflow: "hidden", whiteSpace: "nowrap", width: "100%" }}
@@ -506,7 +527,6 @@ function Home() {
       <div style={{ overflow: "hidden" }}>
         <MapComponent onClick={handleMapClick} data={data}></MapComponent>
       </div>
-
     </div>
   );
 }
