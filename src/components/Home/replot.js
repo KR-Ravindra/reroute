@@ -1,4 +1,4 @@
-export function animateData(speed, data, setData, positions, algorithm, setFinalRoute) {
+export function animateData(speed, data, setData, positions, algorithm, setFinalRoute, fetchedLocationNames) {
   const locations = positions.map((position, index) => ({ id: index, position }));
   let worker;
 
@@ -34,7 +34,7 @@ export function animateData(speed, data, setData, positions, algorithm, setFinal
   worker.onmessage = (event) => {
     const route = event.data;
     console.log("Route from ", {algorithm}, " is ", route)
-    const routeString = route.map(location => location.id).join(' -> ');
+    const routeString = route.map(location => fetchedLocationNames[location.id].split(',').slice(0, 2).join(',') + " ( "+location.id+ " )").join(' -> ');
     setFinalRoute(routeString);
     route.forEach((location, index) => {
       setTimeout(() => {

@@ -96,29 +96,7 @@ function Home() {
       return () => clearTimeout(timer);
     }
   }, [flash]);
-  useEffect(() => {
-    if (route) {
-      const fileContent =
-        "Best Route: " +
-        route +
-        "\n\n" +
-        locationNames
-          .map(
-            (locationName, index) =>
-              `locationID: ${index}, locationName: ${locationName}`
-          )
-          .join("\n");
-      const blob = new Blob([fileContent], { type: "text/plain" });
-      const url = URL.createObjectURL(blob);
 
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "locations.txt";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  }, [route]);
   const fetchSuggestions = async () => {
     if (searchTerm.length < 3) {
       setSuggestions([]);
@@ -309,9 +287,32 @@ function Home() {
       setData,
       positions,
       selectedAlgorithm,
-      setFinalRoute
+      setFinalRoute,
+      locationNames
     );
   };
+
+  const handleRouteDownloadClick = () => {
+    const fileContent =
+    "Best Route: " + "\n" +
+    route +
+    "\n\n" + "Input Locations: " + "\n" +
+    locationNames
+      .map(
+        (locationName, index) =>
+          `locationID: ${index}, locationName: ${locationName}`
+      )
+      .join("\n");
+  const blob = new Blob([fileContent], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "route_by_simulator.txt";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  }
 
   const handleSimulateClick = () => {
     console.log("Simulation Clicked");
@@ -322,7 +323,8 @@ function Home() {
       setData,
       positions,
       selectedAlgorithm,
-      setFinalRoute
+      setFinalRoute,
+      locationNames
     );
   };
 
@@ -431,7 +433,7 @@ function Home() {
         }}
       >
         <option value="Selected Locations" disabled selected>
-          {locationNames.length === 0 ? positions.length : locationNames.length}{" "}
+          {locationNames.length === 0 ? positions.length + " (Demo)" : locationNames.length}{" "}
           Locations Selected
         </option>
         {locationNames.map((locationName, index) => (
@@ -514,9 +516,12 @@ function Home() {
       </ul>
       {route && (
         <div style={{ display: "flex", alignItems: "center" }}>
-          <p style={{ color: "white", background: "#5D767E", margin: "0", padding:'2' }}>
-            Route{" "}
-          </p>
+      <button 
+        style={{ color: "white", background: "#5D767E", margin: "0", padding:'2' }} 
+        onClick={handleRouteDownloadClick}
+      >
+        Download Route!
+      </button>
           <div
             style={{ overflow: "hidden", whiteSpace: "nowrap", width: "100%" }}
           >
