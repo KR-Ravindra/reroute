@@ -65,7 +65,66 @@ function Home() {
     [-83.0458, 42.3314], // Detroit, MI
   ]);
   const [isSelecting, setIsSelecting] = useState(false);
-  const [locationNames, setLocationNames] = useState([]);
+  const [locationNames, setLocationNames] = useState([
+    "Los Angeles, CA",
+    "New York, NY",
+    "Chicago, IL",
+    "Houston, TX",
+    "Phoenix, AZ",
+    "Philadelphia, PA",
+    "San Antonio, TX",
+    "San Diego, CA",
+    "Dallas, TX",
+    "San Francisco, CA",
+    "Portland, OR",
+    "Atlanta, GA",
+    "Miami, FL",
+    "Minneapolis, MN",
+    "Thousand Oaks, CA",
+    "Columbus, OH",
+    "Baltimore, MD",
+    "Charlotte, NC",
+    "Salt Lake City, UT",
+    "Pittsburgh, PA",
+    "Columbus, OH",
+    "Cincinnati, OH",
+    "Kansas City, MO",
+    "Norfolk, VA",
+    "Orlando, FL",
+    "Miami, FL",
+    "Austin, TX",
+    "Montreal, QC, Canada",
+    "Toronto, ON, Canada",
+    "Vancouver, BC, Canada",
+    "Ottawa, ON, Canada",
+    "Fredericton, NB, Canada",
+    "Halifax, NS, Canada",
+    "Prince Rupert, BC, Canada",
+    "Whitehorse, YT, Canada",
+    "Calgary, AB, Canada",
+    "Edmonton, AB, Canada",
+    "Saskatoon, SK, Canada",
+    "Minot, ND",
+    "St. Louis, MO",
+    "Louisville, KY",
+    "Fort Smith, AR",
+    "Little Rock, AR",
+    "Providence, RI",
+    "Albuquerque, NM",
+    "Las Vegas, NV",
+    "St. Louis, MO",
+    "Austin, TX",
+    "Tucson, AZ",
+    "Jacksonville, FL",
+    "Indianapolis, IN",
+    "Richmond, VA",
+    "Charlotte, NC",
+    "Seattle, WA",
+    "Denver, CO",
+    "Boston, MA",
+    "Nashville, TN",
+    "Detroit, MI"
+]);
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [flash, setFlash] = useState(false);
@@ -83,7 +142,6 @@ function Home() {
   const [speed, setSpeed] = useState(0.5);
   const availableSpeeds = [0.1, 0.25, 0.5, 0.7, 1, 2, 2.5, 3, 4];
   const [route, setFinalRoute] = useState("");
-  const [fileUrl, setFileUrl] = useState(null);
 
   useEffect(() => {
     fetchSuggestions();
@@ -112,7 +170,9 @@ function Home() {
   };
 
   const handleSelectClick = () => {
+    handleClearClick();
     setPositions([]);
+    setLocationNames([]);
     setIsSelecting(!isSelecting);
   };
 
@@ -191,7 +251,66 @@ function Home() {
       [-86.7816, 36.1627], // Nashville, TN
       [-83.0458, 42.3314], // Detroit, MI
     ]);
-    setLocationNames([]);
+    setLocationNames([
+      "Los Angeles, CA",
+      "New York, NY",
+      "Chicago, IL",
+      "Houston, TX",
+      "Phoenix, AZ",
+      "Philadelphia, PA",
+      "San Antonio, TX",
+      "San Diego, CA",
+      "Dallas, TX",
+      "San Francisco, CA",
+      "Portland, OR",
+      "Atlanta, GA",
+      "Miami, FL",
+      "Minneapolis, MN",
+      "Thousand Oaks, CA",
+      "Columbus, OH",
+      "Baltimore, MD",
+      "Charlotte, NC",
+      "Salt Lake City, UT",
+      "Pittsburgh, PA",
+      "Columbus, OH",
+      "Cincinnati, OH",
+      "Kansas City, MO",
+      "Norfolk, VA",
+      "Orlando, FL",
+      "Miami, FL",
+      "Austin, TX",
+      "Montreal, QC, Canada",
+      "Toronto, ON, Canada",
+      "Vancouver, BC, Canada",
+      "Ottawa, ON, Canada",
+      "Fredericton, NB, Canada",
+      "Halifax, NS, Canada",
+      "Prince Rupert, BC, Canada",
+      "Whitehorse, YT, Canada",
+      "Calgary, AB, Canada",
+      "Edmonton, AB, Canada",
+      "Saskatoon, SK, Canada",
+      "Minot, ND",
+      "St. Louis, MO",
+      "Louisville, KY",
+      "Fort Smith, AR",
+      "Little Rock, AR",
+      "Providence, RI",
+      "Albuquerque, NM",
+      "Las Vegas, NV",
+      "St. Louis, MO",
+      "Austin, TX",
+      "Tucson, AZ",
+      "Jacksonville, FL",
+      "Indianapolis, IN",
+      "Richmond, VA",
+      "Charlotte, NC",
+      "Seattle, WA",
+      "Denver, CO",
+      "Boston, MA",
+      "Nashville, TN",
+      "Detroit, MI"
+  ]);
     setData([]);
   };
 
@@ -324,7 +443,7 @@ function Home() {
       positions,
       selectedAlgorithm,
       setFinalRoute,
-      locationNames
+      locationNames,
     );
   };
 
@@ -433,7 +552,7 @@ function Home() {
         }}
       >
         <option value="Selected Locations" disabled selected>
-          {locationNames.length === 0 ? positions.length + " (Demo)" : locationNames.length}{" "}
+          {locationNames.length === 58 ? positions.length + " (Demo)" : locationNames.length}{" "}
           Locations Selected
         </option>
         {locationNames.map((locationName, index) => (
