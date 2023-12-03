@@ -9,4 +9,8 @@ In the project directory, you can run:
 
 ### `npm start`
 
+Final Output:
+
+![final.png](./final.png)
+
 Live [here](https://reroute-5dci8e5e4-kr-ravindras-projects.vercel.app/)
